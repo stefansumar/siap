@@ -1,7 +1,9 @@
 import matplotlib.pyplot as plt
 
 
-def plot_features(exog_variables, col_names, country):
+def plot_features(exog_variables, country):
+    col_names = list(exog_variables.columns.values)
+
     exog_variables.plot(subplots=True,
                         title=col_names,
                         legend=False,

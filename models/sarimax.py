@@ -1,32 +1,32 @@
 import statsmodels.api as sm
+import matplotlib.pyplot as plt
 from sklearn.metrics import mean_squared_error
 
-from plots.plot_model_prediction import plot_model_prediction
-from plots.plot_model_prediction_barchart import plot_model_prediction_barchart
+from utils.split_data import split_data
 
 
-def sarimax(train_data, train_exog, test_data, test_exog, country):
-    print("< ==================== SARIMAX ==================== >\n")
+def sarimax(inflation_df, exog_df, country, pdq, PDQS):
+    train_data, test_data, train_exog, test_exog = split_data(inflation_df, exog_df)
 
-    sarimax_model = sm.tsa.SARIMAX(
+    sarimax_model = sm.tsa.statespace.SARIMAX(
         train_data,
-        order=(2, 1, 2),
-        seasonal_order=(2, 1, 2, 52),
-        exog=train_exog,
-        enforce_stationarity=False,
-        enforce_invertibility=False
-    ).fit(disp=0)
+        order=pdq,
+        seasonal_order=PDQS,
+        exog=train_exog
+    )
+    results_sarimax = sarimax_model.fit(disp=0)
+    predictions_sarimax = results_sarimax.predict(start='2015', end='2021', exog=test_exog)
+    predictions_sarimax.index = test_data.index
+    predictions_sarimax = predictions_sarimax
 
-    sarimax_pred = sarimax_model.get_forecast(steps=len(test_data), exog=test_exog)
-    sarimax_pred_df = sarimax_pred.conf_int(alpha=0.05)
-    sarimax_pred_df["Predictions"] = sarimax_model.predict(
-        start=sarimax_pred_df.index[0],
-        end=sarimax_pred_df.index[-1],
-        exog=test_exog)
-    sarimax_pred_df.index = test_data.index
-    y_pred_sarimax = sarimax_pred_df[["Predictions"]]
+    plt.plot(train_data)
+    plt.plot(test_data)
+    plt.plot(predictions_sarimax)
+    plt.legend(['Training', 'Test', 'SARIMAX'])
+    plt.xlabel('Year')
+    plt.ylabel(f'Inflation')
+    plt.suptitle(f'SARIMAX - {country} - Inflation')
+    plt.show()
 
-    plot_model_prediction(train_data, test_data, y_pred_sarimax, "SARIMAX", country)
-    plot_model_prediction_barchart(test_data, y_pred_sarimax, "SARIMAX", country)
-
-    print(f"Mean Squared Error = {round(mean_squared_error(test_data, y_pred_sarimax), 3)}\n")
+    print(f"SARIMAX - {country} - Mean Squared Error = {round(mean_squared_error(test_data, predictions_sarimax), 3)}")
+    print("-----------------------------------------------------------------------------------")
