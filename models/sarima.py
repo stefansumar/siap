@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import statsmodels.api as sm
-from sklearn.metrics import mean_squared_error
 
+from analysis.measures import measures
 from utils.split_data import split_data
 
 
@@ -33,5 +33,4 @@ def sarima(inflation_df, country, pdq, PDQS):
     plt.suptitle(f'SARIMA - {country} - Inflation')
     plt.show()
 
-    print(f"SARIMA - {country} - Mean Squared Error = {round(mean_squared_error(test_data, predictions_SARIMA), 3)}")
-    print("-----------------------------------------------------------------------------------")
+    measures("SARIMA", country, test_data, predictions_SARIMA)

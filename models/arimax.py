@@ -1,7 +1,7 @@
 import statsmodels.api as sm
 import matplotlib.pyplot as plt
-from sklearn.metrics import mean_squared_error
 
+from analysis.measures import measures
 from utils.split_data import split_data
 
 
@@ -28,5 +28,4 @@ def arimax(inflation_df, exog_df, country, pdq):
     plt.suptitle(f'ARIMAX - {country} - Inflation')
     plt.show()
 
-    print(f"ARIMAX - {country} - Mean Squared Error = {round(mean_squared_error(test_data, predictions_ARIMAX), 3)}")
-    print("-----------------------------------------------------------------------------------")
+    measures("ARIMAX", country, test_data, predictions_ARIMAX)

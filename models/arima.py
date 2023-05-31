@@ -1,7 +1,7 @@
-from sklearn.metrics import mean_squared_error
 import matplotlib.pyplot as plt
 from statsmodels.tsa.arima.model import ARIMA
 
+from analysis.measures import measures
 from utils.split_data import split_data
 
 
@@ -25,5 +25,4 @@ def arima(inflation_df, country, pdq):
     plt.suptitle(f'{country} - Inflation')
     plt.show()
 
-    print(f"ARIMA - {country} - Mean Squared Error = {round(mean_squared_error(test_data, predictions_ARIMA), 3)}")
-    print("-----------------------------------------------------------------------------------")
+    measures("ARIMA", country, test_data, predictions_ARIMA)

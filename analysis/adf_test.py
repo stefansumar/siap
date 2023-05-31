@@ -17,8 +17,8 @@ import pandas as pd
 """
 
 
-def adf_test(series, country, regression):
-    dftest = adfuller(series, autolag='AIC', regression=regression)
+def adf_test(series, country):
+    dftest = adfuller(series, autolag='AIC')
     df_output = pd.Series(dftest[0:4], index=['Test Statistic', 'p-value', '#Lags Used', 'Number of Observations Used'])
     for key, value in dftest[4].items():
         df_output['Critical Value (%s)' % key] = value
